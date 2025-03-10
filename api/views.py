@@ -9,10 +9,13 @@ import logging
 from django.conf import settings
 from django.http import FileResponse, JsonResponse
 import os
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_sample(request):
     """
     Add a new sample to the database.
@@ -35,6 +38,7 @@ def add_sample(request):
         return Response({"detail": "Error creating sample"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def get_all_samples(request):
     """
     Get all sample from the database.
