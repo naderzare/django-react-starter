@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # If you’re using Django REST Framework
     'api',
-    'corsheaders'
+    'corsheaders',
+    'drf_yasg',  # Add this line for Swagger support
 ]
 
 MIDDLEWARE = [
