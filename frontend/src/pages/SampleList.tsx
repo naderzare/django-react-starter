@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../axiosConfig";
 import AddSampleModal from "../components/AddSampleModal";
@@ -13,21 +13,10 @@ type Sample = {
 const SampleList: React.FC = () => {
   const [samples, setSamples] = useState<Sample[]>([]);
   const [showAddSampleModal, setShowAddSampleModal] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if user is logged in
-    const user = localStorage.getItem('user');
-    if (!user) {
-      toast.error('Please login to view samples');
-      navigate('/');
-      return;
-    }
-    fetchSamples();
-  }, [navigate]);
-
-  const fetchSamples = async () => {
+  const fetchSamplesWithAuth = async () => {
     try {
       setLoading(true);
       const response = await axios.get<Sample[]>("/api/api/all");
@@ -45,16 +34,48 @@ const SampleList: React.FC = () => {
     }
   };
 
+  const fetchSamplesWithoutAuth = async () => {
+    try {
+      setLoading(true);
+      // Create a new axios instance without the auth token
+      const response = await axios.get<Sample[]>("/api/api/all", {
+        headers: {
+          Authorization: ""  // Send empty token
+        }
+      });
+      setSamples(response.data);
+    } catch (error: any) {
+      toast.error('Error fetching samples');
+      console.error("Error fetching samples:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Sample List</h2>
-        <button
-          className="btn btn-primary"
-          onClick={() => setShowAddSampleModal(true)}
-        >
-          Add Sample
-        </button>
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-primary"
+            onClick={fetchSamplesWithAuth}
+          >
+            Get Samples (Auth Check)
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={fetchSamplesWithoutAuth}
+          >
+            Get Samples (UI Check)
+          </button>
+          <button
+            className="btn btn-success"
+            onClick={() => setShowAddSampleModal(true)}
+          >
+            Add Sample
+          </button>
+        </div>
       </div>
 
       {loading ? (
@@ -92,7 +113,7 @@ const SampleList: React.FC = () => {
         <AddSampleModal
           onClose={() => setShowAddSampleModal(false)}
           onSampleAdded={() => {
-            fetchSamples();
+            fetchSamplesWithAuth();
             toast.success('Sample added successfully');
           }}
         />
