@@ -6,3 +6,6 @@ drf-yasg==1.21.7
 dj-rest-auth==7.0.1
 django-allauth==65.4.1
 djangorestframework-simplejwt==5.4.0
+django-allauth[google]
+google-auth==2.38.0
+cryptography==44.0.2

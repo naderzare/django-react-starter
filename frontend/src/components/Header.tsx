@@ -1,16 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { User } from '../types/auth';
+import { authService } from '../services/authService';
 
 const Header: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
+    // Listen for storage events to update user state
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'user') {
+        setUser(e.newValue ? JSON.parse(e.newValue) : null);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      setUser(null);
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container-fluid">
-        {/* Logo */}
         <Link className="navbar-brand" to="/">
           MyApp
         </Link>
 
-        {/* Toggle button for small screens */}
         <button
           className="navbar-toggler"
           type="button"
@@ -23,9 +51,8 @@ const Header: React.FC = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        {/* Navigation Links */}
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav">
+          <ul className="navbar-nav me-auto">
             <li className="nav-item">
               <Link className="nav-link" to="/">
                 Main
@@ -37,6 +64,24 @@ const Header: React.FC = () => {
               </Link>
             </li>
           </ul>
+
+          {user ? (
+            <div className="d-flex align-items-center text-light">
+              <span className="me-3">
+                {user.username} ({user.email})
+              </span>
+              <button 
+                className="btn btn-outline-light btn-sm"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <Link to="/" className="btn btn-outline-light">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </nav>
