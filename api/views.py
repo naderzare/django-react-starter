@@ -122,7 +122,7 @@ def google_login(request):
                 user.save()
         except User.DoesNotExist:
             # Create new user
-            username = email.split('@')[0]
+            username = email
             base_username = username
             counter = 1
             while User.objects.filter(username=username).exists():
