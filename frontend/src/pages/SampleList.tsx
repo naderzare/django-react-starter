@@ -24,7 +24,7 @@ const SampleList: React.FC = () => {
     } catch (error: any) {
       if (error.response?.status === 401) {
         toast.error('Session expired. Please login again');
-        navigate('/');
+        // navigate('/');
       } else {
         toast.error('Error fetching samples');
       }
