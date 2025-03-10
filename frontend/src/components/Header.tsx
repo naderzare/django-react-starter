@@ -33,7 +33,7 @@ const Header: React.FC = () => {
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/users">
-                User List
+                Sample List
               </Link>
             </li>
           </ul>

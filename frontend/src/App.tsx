@@ -4,7 +4,7 @@ import Header from './components/Header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import MainPage from './pages/MainPage';
-import TaskList from './pages/UserList';
+import TaskList from './pages/SampleList';
 
 const App: React.FC = () => {
   return (

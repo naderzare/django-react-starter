@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import axios from "../axiosConfig";
 
-type AddUserModalProps = {
+type AddSampleModalProps = {
   onClose: () => void;
-  onUserAdded: () => void; // Callback to refresh the user list
+  onSampleAdded: () => void; // Callback to refresh the sample list
 };
 
-const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => {
-  const [username, setUsername] = useState<string>("");
+const AddSampleModal: React.FC<AddSampleModalProps> = ({ onClose, onSampleAdded }) => {
+  const [name, setname] = useState<string>("");
   const [age, setAge] = useState<number | "">("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("/api/add", { username, age });
-      onUserAdded();
+      await axios.post("/api/add", { name, age });
+      onSampleAdded();
       onClose();
     } catch (error) {
-      console.error("Error adding user:", error);
+      console.error("Error adding sample:", error);
     }
   };
 
@@ -30,7 +30,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => 
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Add User</h5>
+            <h5 className="modal-title">Add Sample</h5>
             <button
               type="button"
               className="btn-close"
@@ -40,15 +40,15 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => 
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label className="form-label" htmlFor="username">
-                  Username
+                <label className="form-label" htmlFor="name">
+                  Name
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  id="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  id="name"
+                  value={name}
+                  onChange={(e) => setname(e.target.value)}
                   required
                 />
               </div>
@@ -66,7 +66,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => 
                 />
               </div>
               <button type="submit" className="btn btn-primary">
-                Add User
+                Add Sample
               </button>
             </form>
           </div>
@@ -76,4 +76,4 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => 
   );
 };
 
-export default AddUserModal;
+export default AddSampleModal;

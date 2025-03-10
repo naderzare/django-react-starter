@@ -1,8 +1,8 @@
 # users/serializers.py
 from rest_framework import serializers
-from .models import UserModel
+from .models import SampleModel
 
-class UserSerializer(serializers.ModelSerializer):
+class SampleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserModel
-        fields = ['id', 'username', 'age']
+        model = SampleModel
+        fields = ['id', 'name', 'age']
