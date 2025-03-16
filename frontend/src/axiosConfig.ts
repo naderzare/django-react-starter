@@ -1,10 +1,34 @@
 import axios from 'axios';
 
-// Set the base URL for your FastAPI backend
-axios.defaults.baseURL = 'http://localhost:8000';
+const instance = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
+});
 
-// Optionally set other defaults, like headers or timeout
-axios.defaults.headers.common['Content-Type'] = 'application/json';
-axios.defaults.timeout = 5000; // 5 seconds timeout
+// Request interceptor to add auth token
+instance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-export default axios;
+// Response interceptor to handle common errors
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear invalid tokens
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default instance;

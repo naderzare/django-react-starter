@@ -197,6 +197,12 @@ Below is an example of how your Django REST Framework endpoints might look. Adju
 
 (These are just examples; you’ll configure URLs in your Django app’s `urls.py`.)
 
+## Google Login Integration
+
+- get google client id and client secret from google developer console
+- add client id and client secret in .env file of django project
+- add google client id to frontend .env file
+
 ## Contributing
 
 We welcome contributions! Please follow these steps:

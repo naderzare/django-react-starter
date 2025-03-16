@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -36,6 +37,8 @@ SECRET_KEY = 'django-insecure-ohtpexu$be^+%3rgu6i9sb=u!t$%r_^g8wnx3r_@d!3kc-8ci3
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# add allowed hosts from environment variable
+ALLOWED_HOSTS += os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -47,10 +50,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',  # If you’re using Django REST Framework
+    'django.contrib.sites',  # Required for allauth
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',  # Add this line
     'api',
     'corsheaders',
-    'drf_yasg',  # Add this line for Swagger support
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # Add this line
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -86,7 +99,19 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # React dev server
-    "http://localhost:3001",
+    'http://localhost:3001',
+]
+# add allowed origins from environment variable
+CORS_ALLOWED_ORIGINS += os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -119,12 +144,86 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Authentication settings
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
+# dj-rest-auth settings
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'auth-token',
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh-token',
+    'JWT_AUTH_HTTPONLY': False,
+    'USER_DETAILS_SERIALIZER': 'dj_rest_auth.serializers.UserDetailsSerializer',
+    'TOKEN_MODEL': None,
+}
+
+# Django-allauth settings
+SITE_ID = 1
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Set to 'mandatory' if you want email verification
+
+# Social account settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = True  # auto-create account if not exists
+
+# Swagger settings
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    'SECURITY_REQUIREMENTS': [{'Bearer': []}],
+    'JSON_EDITOR': True,
+    'PERSIST_AUTH': True,
+}
+
+# JWT settings
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+}
+
+# Lemon Squeezy settings
+LEMON_SQUEEZY_SIGNING_SECRET = os.environ.get('LEMON_SQUEEZY_SIGNING_SECRET', 'your-signing-secret')  # Get this from your Lemon Squeezy dashboard
+print(f"LEMON_SQUEEZY_SIGNING_SECRET: {LEMON_SQUEEZY_SIGNING_SECRET}")
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
