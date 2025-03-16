@@ -37,6 +37,8 @@ SECRET_KEY = 'django-insecure-ohtpexu$be^+%3rgu6i9sb=u!t$%r_^g8wnx3r_@d!3kc-8ci3
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# add allowed hosts from environment variable
+ALLOWED_HOSTS += os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -99,6 +101,9 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # React dev server
     'http://localhost:3001',
 ]
+# add allowed origins from environment variable
+CORS_ALLOWED_ORIGINS += os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -216,6 +221,9 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
 }
 
+# Lemon Squeezy settings
+LEMON_SQUEEZY_SIGNING_SECRET = os.environ.get('LEMON_SQUEEZY_SIGNING_SECRET', 'your-signing-secret')  # Get this from your Lemon Squeezy dashboard
+print(f"LEMON_SQUEEZY_SIGNING_SECRET: {LEMON_SQUEEZY_SIGNING_SECRET}")
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
