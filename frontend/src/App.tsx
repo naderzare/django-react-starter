@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import MainPage from './pages/MainPage';
 import TaskList from './pages/SampleList';
+import PaymentsPage from './pages/PaymentsPage';
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/users" element={<TaskList />} />
+            <Route path="/payments" element={<PaymentsPage />} />
           </Routes>
         </div>
         <Toaster position="top-right" />

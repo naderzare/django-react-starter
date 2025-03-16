@@ -63,12 +63,24 @@ const Header: React.FC = () => {
                 Sample List
               </Link>
             </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/payments">
+                Payment & Credits
+              </Link>
+            </li>
           </ul>
 
           {user ? (
             <div className="d-flex align-items-center text-light">
               <span className="me-3">
                 {user.username} ({user.email})
+                {user.account_value !== undefined && (
+                  <span className="ms-2 badge bg-success">
+                    Credits: ${typeof user.account_value === 'number' 
+                      ? user.account_value.toFixed(2) 
+                      : parseFloat(String(user.account_value)).toFixed(2)}
+                  </span>
+                )}
               </span>
               <button 
                 className="btn btn-outline-light btn-sm"
