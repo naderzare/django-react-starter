@@ -1,5 +1,5 @@
 django==5.1.5
-djangorestframework==3.15.2
+djangorestframework==3.16
 django-cors-headers==4.6.0
 python-dotenv==1.0.1
 drf-yasg==1.21.7
@@ -9,3 +9,8 @@ djangorestframework-simplejwt==5.4.0
 django-allauth[google]
 google-auth==2.38.0
 cryptography==44.0.2
+httpx 
+uvicorn
+django-cors-headers>=4.3
+setuptools>=65.5.1
+requests==2.32.3

@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-ohtpexu$be^+%3rgu6i9sb=u!t$%r_^g8wnx3r_@d!3kc-8ci3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 # add allowed hosts from environment variable
 ALLOWED_HOSTS += os.getenv('ALLOWED_HOSTS', '').split(',')
 
@@ -162,7 +162,13 @@ REST_AUTH = {
     'JWT_AUTH_REFRESH_COOKIE': 'refresh-token',
     'JWT_AUTH_HTTPONLY': False,
     'USER_DETAILS_SERIALIZER': 'dj_rest_auth.serializers.UserDetailsSerializer',
+    'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
     'TOKEN_MODEL': None,
+}
+
+# Additional settings for registration
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
 }
 
 # Django-allauth settings
@@ -223,7 +229,7 @@ SIMPLE_JWT = {
 
 # Lemon Squeezy settings
 LEMON_SQUEEZY_SIGNING_SECRET = os.environ.get('LEMON_SQUEEZY_SIGNING_SECRET', 'your-signing-secret')  # Get this from your Lemon Squeezy dashboard
-print(f"LEMON_SQUEEZY_SIGNING_SECRET: {LEMON_SQUEEZY_SIGNING_SECRET}")
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 

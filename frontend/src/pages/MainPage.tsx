@@ -48,7 +48,31 @@ const MainPage: React.FC = () => {
       setUser(response.user);
       setError('');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', err);
+      
+      // Handle different error formats
+      if (err.response?.data) {
+        const errorData = err.response.data;
+        // If error is an object with field-specific errors
+        if (typeof errorData === 'object' && !Array.isArray(errorData)) {
+          const errorMessages = Object.entries(errorData)
+            .map(([field, errors]) => {
+              if (Array.isArray(errors)) {
+                return `${field}: ${errors.join(', ')}`;
+              } else {
+                return `${field}: ${errors}`;
+              }
+            })
+            .join('\n');
+          setError(errorMessages);
+        } else if (typeof errorData === 'string') {
+          setError(errorData);
+        } else {
+          setError('Registration failed. Please check your information and try again.');
+        }
+      } else {
+        setError('Registration failed. Please try again later.');
+      }
     }
   };
 
@@ -119,7 +143,16 @@ const MainPage: React.FC = () => {
                 </button>
               </div>
 
-              {error && <div className="alert alert-danger">{error}</div>}
+              {error && (
+                <div className="alert alert-danger">
+                  {error.split('\n').map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line}
+                      {index < error.split('\n').length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
 
               {/* Google Login Button */}
               <div className="mb-4 d-grid">
